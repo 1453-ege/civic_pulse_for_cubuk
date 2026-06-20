@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>CivicPulse – Çubuk Belediyesi Çözüm Merkezi</title>
+  <meta name="description" content="Çubuk'un dijital çözüm merkezi. Sorunları bildirin, fikirleri oylayın, şehrinizi birlikte yönetin."/>
+  <meta name="theme-color" content="#090c14"/>
+
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/home.css"/>
+</head>
+<body>
+
+<!-- ═══════════════ AUTH MODAL ═══════════════ -->
+<div class="modal-overlay" id="auth-modal-overlay">
+  <div class="modal">
+    <div class="auth-modal-icon">👤</div>
+    <h2 class="modal-title">Merhaba! Sizi Tanıyalım</h2>
+    <p class="modal-subtitle">Çubuk Çözüm Merkezi'ne hoş geldiniz. Sorun bildirebilmek ve oy kullanabilmek için adınızı ve mahallenizi paylaşın.</p>
+    <form id="auth-form">
+      <div class="form-group" style="margin-bottom:var(--space-5)">
+        <label class="form-label" for="auth-name">Ad Soyad</label>
+        <input class="form-input" id="auth-name" type="text" placeholder="Örn: Ahmet Yılmaz" autocomplete="name" required/>
+      </div>
+      <div class="form-group" style="margin-bottom:var(--space-8)">
+        <label class="form-label" for="auth-neighborhood">Mahalle / Sokak</label>
+        <input class="form-input" id="auth-neighborhood" type="text" placeholder="Örn: Cumhuriyet Mahallesi" autocomplete="address-level2" required/>
+        <span class="form-hint">Bu bilgi sadece raporunuzun konumunu doğrulamak için kullanılır.</span>
+      </div>
+      <button class="btn btn-primary btn-lg" id="auth-submit" type="submit" style="width:100%" disabled>
+        Platforma Giriş Yap →
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav class="nav">
+  <div class="container">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">🏛️</div>
+      <div class="nav-brand-text">
+        <span class="nav-brand-name">CivicPulse</span>
+        <span class="nav-brand-sub">Çubuk Belediyesi</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link active"><span class="nav-link-icon">🏠</span> Ana Sayfa</a>
+      <a href="report.html"  class="nav-link"><span class="nav-link-icon">📍</span> Sorun Bildir</a>
+      <a href="tracker.html" class="nav-link"><span class="nav-link-icon">📊</span> Takip Et</a>
+      <a href="ideas.html"   class="nav-link"><span class="nav-link-icon">💡</span> Fikirler</a>
+    </div>
+    <button class="nav-user" id="nav-user-btn">
+      <div class="nav-avatar" data-user-avatar>?</div>
+      <span data-user-name style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Giriş Yapılmadı</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-eyebrow reveal">
+      <span class="live-dot">Anlık Veri</span>
+      &nbsp;·&nbsp; Çubuk, Ankara
+    </div>
+    <h1 class="hero-title reveal reveal-delay-1">
+      Çubuk'un<br/>
+      <span class="hero-title-accent">Sesi Sensin</span>
+    </h1>
+    <p class="hero-subtitle reveal reveal-delay-2">
+      Sorun bildir, fikir öner, şehrin dönüşümünü izle.<br/>
+      Gerçek şeffaflık, gerçek katılım, gerçek değişim.
+    </p>
+    <div class="hero-actions reveal reveal-delay-3">
+      <a href="report.html" class="btn btn-primary btn-lg hero-btn-primary">
+        <span>📍</span> Sorun Bildir
+      </a>
+      <a href="ideas.html" class="btn btn-ghost btn-lg">
+        <span>💡</span> Fikir Öner
+      </a>
+    </div>
+    <div class="hero-stats reveal reveal-delay-4">
+      <div class="hero-stat">
+        <span class="hero-stat-value" data-count="247">0</span>
+        <span class="hero-stat-label">Çözülen Sorun</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" data-count="89">0</span>
+        <span class="hero-stat-label">Aktif Öneri</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-value hero-stat-time">2.4</span>
+        <span class="hero-stat-label">Ort. Yanıt (Gün)</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-value" data-count="1340">0</span>
+        <span class="hero-stat-label">Kayıtlı Vatandaş</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-mouse"><div class="scroll-mouse-dot"></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ MODULE CARDS ═══════════════ -->
+<section class="section modules-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Modüller</div>
+      <h2 class="section-title">Şehrinize Katkı Sağlayın</h2>
+      <p class="section-sub">Üç adımda aktif bir Çubuk vatandaşı olun.</p>
+    </div>
+    <div class="modules-grid">
+      <!-- Report -->
+      <a href="report.html" class="module-card module-card-blue reveal reveal-delay-1">
+        <div class="module-card-glow"></div>
+        <div class="module-card-icon">📍</div>
+        <div class="module-card-num">01</div>
+        <h3 class="module-card-title">Sorun Bildir</h3>
+        <p class="module-card-desc">Fotoğraf çek, konumunu işaretle, anında gönder. Bozuk yoldan çöp konteynerine tüm sorunları bildirin.</p>
+        <div class="module-card-footer">
+          <span class="module-card-tag">🕳️ Yol</span>
+          <span class="module-card-tag">💡 Işık</span>
+          <span class="module-card-tag">🗑️ Çöp</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- Tracker -->
+      <a href="tracker.html" class="module-card module-card-amber reveal reveal-delay-2">
+        <div class="module-card-glow"></div>
+        <div class="module-card-icon">📊</div>
+        <div class="module-card-num">02</div>
+        <h3 class="module-card-title">Canlı Takip Et</h3>
+        <p class="module-card-desc">Bildirdiğiniz her sorunun anlık durumunu ve çözüm sürecini adım adım takip edin. Şeffaflık sözümüz.</p>
+        <div class="module-card-footer">
+          <span class="module-card-tag badge-green">✅ 247 Çözüldü</span>
+          <span class="module-card-tag badge-amber">🔄 12 İşlemde</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+      <!-- Ideas -->
+      <a href="ideas.html" class="module-card module-card-purple reveal reveal-delay-3">
+        <div class="module-card-glow"></div>
+        <div class="module-card-icon">💡</div>
+        <div class="module-card-num">03</div>
+        <h3 class="module-card-title">Fikir Öner & Oy Ver</h3>
+        <p class="module-card-desc">Mahalleniz için fikirlerinizi paylaşın, vatandaşların oyuyla en iyi projeler hayata geçsin.</p>
+        <div class="module-card-footer">
+          <span class="module-card-tag">🚲 Bisiklet Yolu</span>
+          <span class="module-card-tag">🥒 Turşu Fest.</span>
+          <span class="module-card-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STATS BAND ═══════════════ -->
+<section class="stats-band">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-icon-wrap" style="background:var(--green-alpha)">✅</div>
+        <div>
+          <div class="stat-value" data-count="247">0</div>
+          <div class="stat-label">Bu Ay Çözüldü</div>
+        </div>
+      </div>
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="stat-icon-wrap" style="background:var(--amber-alpha)">⏳</div>
+        <div>
+          <div class="stat-value" data-count="12">0</div>
+          <div class="stat-label">İşlemde</div>
+        </div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-icon-wrap" style="background:var(--purple-alpha)">💡</div>
+        <div>
+          <div class="stat-value" data-count="89">0</div>
+          <div class="stat-label">Aktif Öneri</div>
+        </div>
+      </div>
+      <div class="stat-card reveal reveal-delay-3">
+        <div class="stat-icon-wrap" style="background:var(--blue-alpha)">👥</div>
+        <div>
+          <div class="stat-value" data-count="1340">0</div>
+          <div class="stat-label">Kayıtlı Vatandaş</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ACTIVITY FEED ═══════════════ -->
+<section class="section activity-section">
+  <div class="container">
+    <div class="activity-header reveal">
+      <div>
+        <div class="section-eyebrow">Etkinlik Akışı</div>
+        <h2 class="section-title">Çubuk'ta Neler Oluyor?</h2>
+      </div>
+      <a href="tracker.html" class="btn btn-ghost btn-sm">Tümünü Gör →</a>
+    </div>
+    <div class="activity-feed" id="activity-feed">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA BAND ═══════════════ -->
+<section class="cta-band reveal">
+  <div class="container">
+    <div class="cta-content">
+      <div class="cta-badge">🏛️ Çubuk Belediyesi</div>
+      <h2 class="cta-title">Çubuk'u Birlikte İnşa Edelim</h2>
+      <p class="cta-sub">Her bildiri, her oy ve her fikir şehrimizi daha yaşanabilir kılıyor.</p>
+      <div class="cta-actions">
+        <a href="report.html" class="btn btn-primary btn-lg">📍 İlk Sorununu Bildir</a>
+        <a href="ideas.html"  class="btn btn-ghost btn-lg">💡 Fikir Paylaş</a>
+      </div>
+    </div>
+    <div class="cta-visual">🏘️</div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <div class="nav-brand-icon" style="width:32px;height:32px;font-size:16px">🏛️</div>
+      <div>
+        <div style="font-weight:700;font-size:var(--text-sm)">CivicPulse</div>
+        <div style="font-size:var(--text-xs);color:var(--text-muted)">Çubuk Belediyesi · Ankara</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="report.html">Sorun Bildir</a>
+      <a href="tracker.html">Takip Et</a>
+      <a href="ideas.html">Fikirler</a>
+    </div>
+    <div class="footer-copy">© 2024 Çubuk Belediyesi. Tüm hakları saklıdır.</div>
+  </div>
+</footer>
+
+<!-- ═══════════════ BOTTOM NAV ═══════════════ -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-items">
+    <a href="index.html"   class="bottom-nav-item active"><span class="bn-icon">🏠</span><span>Ana Sayfa</span></a>
+    <a href="report.html"  class="bottom-nav-item"><span class="bn-icon">📍</span><span>Bildir</span></a>
+    <a href="tracker.html" class="bottom-nav-item"><span class="bn-icon">📊</span><span>Takip</span></a>
+    <a href="ideas.html"   class="bottom-nav-item"><span class="bn-icon">💡</span><span>Fikirler</span></a>
+  </div>
+</nav>
+
+<!-- ═══════════════ TOAST CONTAINER ═══════════════ -->
+<div id="toast-container"></div>
+<canvas id="particle-canvas"></canvas>
+
+<script src="js/data/issues.js"></script>
+<script src="js/data/ideas.js"></script>
+<script src="js/app.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

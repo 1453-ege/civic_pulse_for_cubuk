@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Sorun Takip – CivicPulse Çubuk</title>
+  <meta name="description" content="Çubuk'ta bildirilen sorunların anlık durumunu takip edin."/>
+  <meta name="theme-color" content="#090c14"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/tracker.css"/>
+</head>
+<body>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="auth-modal-overlay">
+  <div class="modal">
+    <div class="auth-modal-icon">👤</div>
+    <h2 class="modal-title">Merhaba! Sizi Tanıyalım</h2>
+    <p class="modal-subtitle">Sorun takip edebilmek için adınızı ve mahallenizi paylaşın.</p>
+    <form id="auth-form">
+      <div class="form-group" style="margin-bottom:var(--space-5)">
+        <label class="form-label" for="auth-name">Ad Soyad</label>
+        <input class="form-input" id="auth-name" type="text" placeholder="Örn: Ahmet Yılmaz" required/>
+      </div>
+      <div class="form-group" style="margin-bottom:var(--space-8)">
+        <label class="form-label" for="auth-neighborhood">Mahalle / Sokak</label>
+        <input class="form-input" id="auth-neighborhood" type="text" placeholder="Örn: Cumhuriyet Mahallesi" required/>
+      </div>
+      <button class="btn btn-primary btn-lg" id="auth-submit" type="submit" style="width:100%" disabled>
+        Platforma Giriş Yap →
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="container">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">🏛️</div>
+      <div class="nav-brand-text">
+        <span class="nav-brand-name">CivicPulse</span>
+        <span class="nav-brand-sub">Çubuk Belediyesi</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link"><span class="nav-link-icon">🏠</span> Ana Sayfa</a>
+      <a href="report.html"  class="nav-link"><span class="nav-link-icon">📍</span> Sorun Bildir</a>
+      <a href="tracker.html" class="nav-link active"><span class="nav-link-icon">📊</span> Takip Et</a>
+      <a href="ideas.html"   class="nav-link"><span class="nav-link-icon">💡</span> Fikirler</a>
+    </div>
+    <button class="nav-user">
+      <div class="nav-avatar" data-user-avatar>?</div>
+      <span data-user-name style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Giriş Yapılmadı</span>
+    </button>
+  </div>
+</nav>
+
+<main class="page-wrapper">
+  <div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-eyebrow">📊 Canlı Takip</div>
+      <h1 class="page-header-title">Sorun Takip Merkezi</h1>
+      <p class="page-header-sub">Çubuk'ta bildirilen tüm sorunların anlık durumunu ve çözüm sürecini izleyin.</p>
+    </div>
+
+    <!-- Status Summary -->
+    <div class="tracker-summary reveal">
+      <div class="tracker-stat">
+        <span class="tracker-stat-val" id="ts-total">0</span>
+        <span class="tracker-stat-label">Toplam</span>
+      </div>
+      <div class="tracker-stat">
+        <span class="tracker-stat-val ts-green" id="ts-resolved">0</span>
+        <span class="tracker-stat-label">✅ Çözüldü</span>
+      </div>
+      <div class="tracker-stat">
+        <span class="tracker-stat-val ts-amber" id="ts-active">0</span>
+        <span class="tracker-stat-label">⏳ İşlemde</span>
+      </div>
+      <div class="tracker-stat">
+        <span class="tracker-stat-val ts-blue" id="ts-review">0</span>
+        <span class="tracker-stat-label">🔍 İnceleniyor</span>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar reveal reveal-delay-1">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="tracker-search" type="text" placeholder="Takip no, başlık veya mahalle ara…"/>
+      </div>
+      <button class="filter-chip active" data-filter="all">Tümü</button>
+      <button class="filter-chip" data-filter="received">Alındı</button>
+      <button class="filter-chip" data-filter="reviewing">İnceleniyor</button>
+      <button class="filter-chip" data-filter="dispatched">Görevlide</button>
+      <button class="filter-chip" data-filter="resolved">Çözüldü</button>
+    </div>
+
+    <!-- Issue Grid -->
+    <div class="issues-grid" id="issues-grid">
+      <!-- Populated by JS -->
+    </div>
+
+  </div>
+</main>
+
+<!-- Issue Detail Overlay (slide-over) -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-header">
+      <button class="detail-close" id="detail-close">✕</button>
+      <div class="detail-id" id="detail-id">—</div>
+    </div>
+    <div class="detail-body" id="detail-body">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-items">
+    <a href="index.html"   class="bottom-nav-item"><span class="bn-icon">🏠</span><span>Ana Sayfa</span></a>
+    <a href="report.html"  class="bottom-nav-item"><span class="bn-icon">📍</span><span>Bildir</span></a>
+    <a href="tracker.html" class="bottom-nav-item active"><span class="bn-icon">📊</span><span>Takip</span></a>
+    <a href="ideas.html"   class="bottom-nav-item"><span class="bn-icon">💡</span><span>Fikirler</span></a>
+  </div>
+</nav>
+
+<div id="toast-container"></div>
+
+<script src="js/data/issues.js"></script>
+<script src="js/data/ideas.js"></script>
+<script src="js/app.js"></script>
+<script src="js/tracker.js"></script>
+</body>
+</html>

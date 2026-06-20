@@ -1,0 +1,128 @@
+/* ═══════════════════════════════════════════════════════════════
+   CivicPulse – Design Tokens  |  Çubuk Belediyesi Çözüm Merkezi
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* ── Background Scale ────────────────────────────── */
+  --bg-base:    hsl(224, 32%, 6%);
+  --bg-surface: hsl(224, 26%, 10%);
+  --bg-raised:  hsl(224, 22%, 14%);
+  --bg-overlay: hsl(224, 18%, 18%);
+  --bg-hover:   hsl(224, 16%, 22%);
+  --border:     hsl(224, 20%, 22%);
+  --border-muted: hsl(224, 16%, 17%);
+
+  /* ── Brand ───────────────────────────────────────── */
+  --blue:         hsl(221, 88%, 60%);
+  --blue-light:   hsl(221, 90%, 74%);
+  --blue-dark:    hsl(221, 88%, 46%);
+  --blue-alpha:   hsla(221, 88%, 60%, 0.15);
+  --blue-glow:    hsla(221, 88%, 60%, 0.30);
+
+  --green:        hsl(158, 62%, 46%);
+  --green-light:  hsl(158, 62%, 64%);
+  --green-alpha:  hsla(158, 62%, 46%, 0.15);
+  --green-glow:   hsla(158, 62%, 46%, 0.30);
+
+  --amber:        hsl(36, 94%, 56%);
+  --amber-light:  hsl(36, 94%, 72%);
+  --amber-alpha:  hsla(36, 94%, 56%, 0.15);
+  --amber-glow:   hsla(36, 94%, 56%, 0.30);
+
+  --red:          hsl(4, 84%, 58%);
+  --red-light:    hsl(4, 84%, 72%);
+  --red-alpha:    hsla(4, 84%, 58%, 0.15);
+  --red-glow:     hsla(4, 84%, 58%, 0.30);
+
+  --purple:       hsl(268, 72%, 62%);
+  --purple-alpha: hsla(268, 72%, 62%, 0.15);
+  --purple-glow:  hsla(268, 72%, 62%, 0.30);
+
+  --cyan:         hsl(196, 80%, 52%);
+  --cyan-alpha:   hsla(196, 80%, 52%, 0.15);
+
+  /* ── Text Scale ──────────────────────────────────── */
+  --text-primary:   hsl(220, 28%, 97%);
+  --text-secondary: hsl(220, 16%, 72%);
+  --text-muted:     hsl(220, 12%, 52%);
+  --text-subtle:    hsl(220, 10%, 36%);
+
+  /* ── Typography ──────────────────────────────────── */
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* ── Font Sizes ──────────────────────────────────── */
+  --text-xs:   0.6875rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;
+
+  /* ── Spacing ─────────────────────────────────────── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ── Border Radii ────────────────────────────────── */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-2xl:  36px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ─────────────────────────────────────── */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.35);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.45);
+  --shadow-lg: 0 8px 36px rgba(0,0,0,0.55);
+  --shadow-xl: 0 16px 64px rgba(0,0,0,0.65);
+  --shadow-glow-blue:  0 0 0 1px var(--blue-alpha),  0 8px 32px var(--blue-glow);
+  --shadow-glow-green: 0 0 0 1px var(--green-alpha), 0 8px 32px var(--green-glow);
+  --shadow-glow-amber: 0 0 0 1px var(--amber-alpha), 0 8px 32px var(--amber-glow);
+  --shadow-glow-red:   0 0 0 1px var(--red-alpha),   0 8px 32px var(--red-glow);
+
+  /* ── Easings ─────────────────────────────────────── */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+
+  /* ── Transitions ─────────────────────────────────── */
+  --t-fast:   150ms var(--ease-smooth);
+  --t-normal: 280ms var(--ease-smooth);
+  --t-slow:   480ms var(--ease-smooth);
+  --t-spring: 380ms var(--ease-spring);
+
+  /* ── Z-Index ─────────────────────────────────────── */
+  --z-base:   1;
+  --z-raised: 10;
+  --z-sticky: 40;
+  --z-nav:    50;
+  --z-modal:  100;
+  --z-toast:  200;
+
+  /* ── Layout ──────────────────────────────────────── */
+  --nav-height:     68px;
+  --bottom-nav-h:   72px;
+  --max-width:      1280px;
+  --content-width:  900px;
+}

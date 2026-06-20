@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Sorun Bildir – CivicPulse Çubuk</title>
+  <meta name="description" content="Çubuk'taki bir sorunu 4 adımda bildirin. Fotoğraf çekin, konumunuzu paylaşın, anında gönderin."/>
+  <meta name="theme-color" content="#090c14"/>
+
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/report.css"/>
+</head>
+<body>
+
+<!-- AUTH MODAL (shared) -->
+<div class="modal-overlay" id="auth-modal-overlay">
+  <div class="modal">
+    <div class="auth-modal-icon">👤</div>
+    <h2 class="modal-title">Merhaba! Sizi Tanıyalım</h2>
+    <p class="modal-subtitle">Sorun bildirebilmek için adınızı ve mahallenizi paylaşın.</p>
+    <form id="auth-form">
+      <div class="form-group" style="margin-bottom:var(--space-5)">
+        <label class="form-label" for="auth-name">Ad Soyad</label>
+        <input class="form-input" id="auth-name" type="text" placeholder="Örn: Ahmet Yılmaz" autocomplete="name" required/>
+      </div>
+      <div class="form-group" style="margin-bottom:var(--space-8)">
+        <label class="form-label" for="auth-neighborhood">Mahalle / Sokak</label>
+        <input class="form-input" id="auth-neighborhood" type="text" placeholder="Örn: Cumhuriyet Mahallesi" required/>
+      </div>
+      <button class="btn btn-primary btn-lg" id="auth-submit" type="submit" style="width:100%" disabled>
+        Platforma Giriş Yap →
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="container">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-brand-icon">🏛️</div>
+      <div class="nav-brand-text">
+        <span class="nav-brand-name">CivicPulse</span>
+        <span class="nav-brand-sub">Çubuk Belediyesi</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"   class="nav-link"><span class="nav-link-icon">🏠</span> Ana Sayfa</a>
+      <a href="report.html"  class="nav-link active"><span class="nav-link-icon">📍</span> Sorun Bildir</a>
+      <a href="tracker.html" class="nav-link"><span class="nav-link-icon">📊</span> Takip Et</a>
+      <a href="ideas.html"   class="nav-link"><span class="nav-link-icon">💡</span> Fikirler</a>
+    </div>
+    <button class="nav-user" id="nav-user-btn">
+      <div class="nav-avatar" data-user-avatar>?</div>
+      <span data-user-name style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Giriş Yapılmadı</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN REPORT WIZARD -->
+<main class="report-main">
+  <div class="report-container">
+
+    <!-- Header -->
+    <div class="report-header">
+      <div class="page-header-eyebrow">📍 Sorun Bildirimi</div>
+      <h1 class="report-title">Sorununuzu Bildirin</h1>
+      <p class="report-subtitle">Çubuk'ta bir sorun mu var? 4 adımda bildirin, gerisi bize kalsın.</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="wizard-progress">
+      <div class="wizard-progress-bar" id="wizard-progress-bar"></div>
+      <div class="wizard-steps" id="wizard-steps-indicator">
+        <div class="wizard-step active" data-step="1">
+          <div class="wizard-step-dot"><span>1</span></div>
+          <div class="wizard-step-label">Kategori</div>
+        </div>
+        <div class="wizard-step-line"></div>
+        <div class="wizard-step" data-step="2">
+          <div class="wizard-step-dot"><span>2</span></div>
+          <div class="wizard-step-label">Fotoğraf</div>
+        </div>
+        <div class="wizard-step-line"></div>
+        <div class="wizard-step" data-step="3">
+          <div class="wizard-step-dot"><span>3</span></div>
+          <div class="wizard-step-label">Konum</div>
+        </div>
+        <div class="wizard-step-line"></div>
+        <div class="wizard-step" data-step="4">
+          <div class="wizard-step-dot"><span>4</span></div>
+          <div class="wizard-step-label">Gönder</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step Panels -->
+    <div class="wizard-panels" id="wizard-panels">
+
+      <!-- STEP 1: Category -->
+      <div class="wizard-panel active" id="step-1">
+        <h2 class="wizard-step-title">Sorun Türünü Seçin</h2>
+        <p class="wizard-step-sub">Bildirmek istediğiniz soruna en uygun kategoriyi seçin.</p>
+        <div class="category-grid" id="category-grid">
+          <button class="category-btn" data-cat="yol" data-cat-label="Yol Hasarı">
+            <span class="cat-icon">🕳️</span>
+            <span class="cat-label">Yol Hasarı</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="aydinlatma" data-cat-label="Aydınlatma">
+            <span class="cat-icon">💡</span>
+            <span class="cat-label">Aydınlatma</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="cop" data-cat-label="Atık / Çöp">
+            <span class="cat-icon">🗑️</span>
+            <span class="cat-label">Atık / Çöp</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="kaldirim" data-cat-label="Kaldırım">
+            <span class="cat-icon">🚶</span>
+            <span class="cat-label">Kaldırım</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="park" data-cat-label="Park / Yeşil Alan">
+            <span class="cat-icon">🌳</span>
+            <span class="cat-label">Park / Yeşil Alan</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="su" data-cat-label="Su / Altyapı">
+            <span class="cat-icon">💧</span>
+            <span class="cat-label">Su / Altyapı</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="trafik" data-cat-label="Trafik / Levha">
+            <span class="cat-icon">🚦</span>
+            <span class="cat-label">Trafik / Levha</span>
+            <span class="cat-check">✓</span>
+          </button>
+          <button class="category-btn" data-cat="diger" data-cat-label="Diğer">
+            <span class="cat-icon">✏️</span>
+            <span class="cat-label">Diğer</span>
+            <span class="cat-check">✓</span>
+          </button>
+        </div>
+        <div class="wizard-nav">
+          <span></span>
+          <button class="btn btn-primary" id="step1-next" disabled>Devam Et →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Photo & Description -->
+      <div class="wizard-panel" id="step-2">
+        <h2 class="wizard-step-title">Fotoğraf & Açıklama</h2>
+        <p class="wizard-step-sub">Sorunu belgeleyin. Fotoğraf olmadan da devam edebilirsiniz.</p>
+
+        <div class="photo-drop-zone" id="photo-drop-zone">
+          <input type="file" id="photo-input" accept="image/*" capture="environment" class="sr-only"/>
+          <div class="photo-drop-placeholder" id="photo-placeholder">
+            <div class="photo-drop-icon">📷</div>
+            <div class="photo-drop-text">Fotoğraf ekleyin</div>
+            <div class="photo-drop-hint">Sürükle & bırak veya tıklayın</div>
+            <button class="btn btn-ghost btn-sm photo-camera-btn" id="photo-camera-btn">
+              📷 Kamera / Galeri
+            </button>
+          </div>
+          <div class="photo-preview-wrap hidden" id="photo-preview-wrap">
+            <img id="photo-preview" alt="Önizleme" class="photo-preview-img"/>
+            <button class="photo-remove-btn" id="photo-remove-btn" title="Fotoğrafı Kaldır">✕</button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:var(--space-6)">
+          <label class="form-label" for="issue-title">Başlık <span style="color:var(--red)">*</span></label>
+          <input class="form-input" id="issue-title" type="text" placeholder="Kısa bir başlık girin…" maxlength="80" required/>
+          <span class="char-count"><span id="title-count">0</span>/80</span>
+        </div>
+
+        <div class="form-group" style="margin-top:var(--space-4)">
+          <label class="form-label" for="issue-desc">Açıklama</label>
+          <textarea class="form-input form-textarea" id="issue-desc" placeholder="Sorunu detaylandırın. Ne zaman fark ettiniz, ne kadar süredir devam ediyor?" maxlength="500"></textarea>
+          <span class="char-count"><span id="desc-count">0</span>/500</span>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" id="step2-back">← Geri</button>
+          <button class="btn btn-primary" id="step2-next" disabled>Devam Et →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Location -->
+      <div class="wizard-panel" id="step-3">
+        <h2 class="wizard-step-title">Konumu İşaretleyin</h2>
+        <p class="wizard-step-sub">Haritada sorunun yaşandığı yeri belirtin. Pini sürükleyerek hassaslaştırabilirsiniz.</p>
+
+        <button class="btn btn-ghost locate-btn" id="locate-btn">
+          🎯 Konumumu Otomatik Tespit Et
+        </button>
+
+        <div class="map-wrap">
+          <div id="leaflet-map"></div>
+          <div class="map-crosshair">＋</div>
+        </div>
+
+        <div class="location-card hidden" id="location-card">
+          <div class="location-card-icon">📍</div>
+          <div class="location-card-text">
+            <div class="location-card-label">Seçilen Konum</div>
+            <div class="location-card-address" id="location-address">—</div>
+          </div>
+          <span class="badge badge-green">✓ Onaylandı</span>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" id="step3-back">← Geri</button>
+          <button class="btn btn-primary" id="step3-next" disabled>Devam Et →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Review & Submit -->
+      <div class="wizard-panel" id="step-4">
+        <h2 class="wizard-step-title">İncele & Gönder</h2>
+        <p class="wizard-step-sub">Bilgileri kontrol edin, ardından bildirimi gönderin.</p>
+
+        <div class="review-card" id="review-card">
+          <div class="review-photo" id="review-photo">
+            <div class="review-photo-placeholder">📷</div>
+          </div>
+          <div class="review-details">
+            <div class="review-row">
+              <span class="review-key">Kategori</span>
+              <span class="review-val" id="review-cat">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-key">Başlık</span>
+              <span class="review-val" id="review-title">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-key">Açıklama</span>
+              <span class="review-val" id="review-desc">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-key">Konum</span>
+              <span class="review-val" id="review-address">—</span>
+            </div>
+            <div class="review-row">
+              <span class="review-key">Bildiren</span>
+              <span class="review-val" id="review-user">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="priority-select">
+          <label class="form-label">Öncelik Seviyesi</label>
+          <div class="priority-options">
+            <label class="priority-opt" data-val="low">
+              <input type="radio" name="priority" value="low"/> <span>🟢 Düşük</span>
+            </label>
+            <label class="priority-opt active" data-val="medium">
+              <input type="radio" name="priority" value="medium" checked/> <span>🔵 Normal</span>
+            </label>
+            <label class="priority-opt" data-val="high">
+              <input type="radio" name="priority" value="high"/> <span>🟠 Yüksek</span>
+            </label>
+            <label class="priority-opt" data-val="urgent">
+              <input type="radio" name="priority" value="urgent"/> <span>🔴 Acil</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="wizard-nav">
+          <button class="btn btn-ghost" id="step4-back">← Geri</button>
+          <button class="btn btn-green btn-lg" id="submit-btn">
+            <span id="submit-btn-text">🚀 Bildirimi Gönder</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div class="wizard-panel" id="step-success">
+        <div class="success-screen">
+          <div class="success-icon-wrap">
+            <div class="success-ring"></div>
+            <div class="success-check">✓</div>
+          </div>
+          <h2 class="success-title">Bildiriminiz Alındı!</h2>
+          <p class="success-sub">Teşekkürler! Ekibimiz en kısa sürede değerlendirip size dönüş yapacak.</p>
+          <div class="success-id-card">
+            <span class="success-id-label">Takip Numaranız</span>
+            <span class="success-id" id="success-tracking-id">CP-2024-007</span>
+          </div>
+          <div class="success-actions">
+            <a href="tracker.html" class="btn btn-primary btn-lg">📊 Takip Sayfasına Git</a>
+            <a href="index.html"   class="btn btn-ghost btn-lg">🏠 Ana Sayfaya Dön</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /wizard-panels -->
+  </div><!-- /report-container -->
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-items">
+    <a href="index.html"   class="bottom-nav-item"><span class="bn-icon">🏠</span><span>Ana Sayfa</span></a>
+    <a href="report.html"  class="bottom-nav-item active"><span class="bn-icon">📍</span><span>Bildir</span></a>
+    <a href="tracker.html" class="bottom-nav-item"><span class="bn-icon">📊</span><span>Takip</span></a>
+    <a href="ideas.html"   class="bottom-nav-item"><span class="bn-icon">💡</span><span>Fikirler</span></a>
+  </div>
+</nav>
+
+<div id="toast-container"></div>
+<canvas id="particle-canvas"></canvas>
+
+<!-- NOTE: Google Maps can replace Leaflet. Add your API key here:
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initGoogleMap" async defer></script>
+-->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/data/issues.js"></script>
+<script src="js/data/ideas.js"></script>
+<script src="js/app.js"></script>
+<script src="js/report.js"></script>
+</body>
+</html>
