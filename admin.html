@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yönetim Paneli – CivicPulse Çubuk</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body class="admin-body">
+
+<!-- ── GİRİŞ EKRANI ─────────────────────────────────────────── -->
+<div class="admin-login" id="admin-login">
+  <div class="admin-login-card">
+    <div class="admin-login-logo">🏛️</div>
+    <h1 class="admin-login-title">Belediye Yönetim Paneli</h1>
+    <p class="admin-login-sub">CivicPulse · Çubuk Belediyesi</p>
+    <form id="admin-login-form">
+      <div class="form-group" style="margin-bottom:var(--space-6)">
+        <label class="form-label" for="admin-pass">Yönetici Şifresi</label>
+        <input class="form-input" id="admin-pass" type="password"
+          placeholder="••••••••" autocomplete="current-password" required/>
+      </div>
+      <button class="btn btn-primary btn-lg" style="width:100%" type="submit">
+        🔐 Panele Giriş Yap
+      </button>
+      <p id="login-error" class="admin-login-error hidden">❌ Şifre yanlış. Tekrar deneyin.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ────────────────────────────────────────────── -->
+<div class="admin-app hidden" id="admin-app">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <span class="admin-sidebar-icon">🏛️</span>
+      <div>
+        <div class="admin-sidebar-name">CivicPulse</div>
+        <div class="admin-sidebar-sub">Yönetim Paneli</div>
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" data-section="issues">
+        <span>📋</span> Sorunlar
+        <span class="admin-nav-badge" id="nav-badge-total">0</span>
+      </button>
+      <button class="admin-nav-item" data-section="stats">
+        <span>📊</span> İstatistikler
+      </button>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+      <a href="index.html" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center">
+        ← Siteye Dön
+      </a>
+      <button class="btn btn-ghost btn-sm" id="admin-logout"
+        style="width:100%;justify-content:center;margin-top:var(--space-2)">
+        🚪 Çıkış
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+
+    <!-- ── SORUNLAR BÖLÜMÜ ── -->
+    <section class="admin-section active" id="section-issues">
+
+      <!-- Header -->
+      <div class="admin-section-header">
+        <div>
+          <h1 class="admin-section-title">Sorun Yönetimi</h1>
+          <p class="admin-section-sub">Tüm bildirimleri görüntüle, durum güncelle, not ekle</p>
+        </div>
+        <div class="admin-header-actions">
+          <div class="admin-live-dot"><span class="live-dot"></span> Canlı</div>
+        </div>
+      </div>
+
+      <!-- Stats Strip -->
+      <div class="admin-stats-strip">
+        <div class="admin-stat-chip">
+          <span class="admin-stat-num" id="stat-total">0</span>
+          <span class="admin-stat-lbl">Toplam</span>
+        </div>
+        <div class="admin-stat-chip pending">
+          <span class="admin-stat-num" id="stat-received">0</span>
+          <span class="admin-stat-lbl">⏳ Bekleyen</span>
+        </div>
+        <div class="admin-stat-chip blue">
+          <span class="admin-stat-num" id="stat-reviewing">0</span>
+          <span class="admin-stat-lbl">🔍 İnceleniyor</span>
+        </div>
+        <div class="admin-stat-chip amber">
+          <span class="admin-stat-num" id="stat-dispatched">0</span>
+          <span class="admin-stat-lbl">🚗 Görevde</span>
+        </div>
+        <div class="admin-stat-chip green">
+          <span class="admin-stat-num" id="stat-resolved">0</span>
+          <span class="admin-stat-lbl">✅ Çözüldü</span>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="admin-filters">
+        <div class="search-input-wrap" style="flex:1;min-width:200px">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="admin-search"
+            type="text" placeholder="Başlık, mahalle veya takip no ara…"/>
+        </div>
+        <select class="admin-select" id="admin-status-filter">
+          <option value="all">Tüm Durumlar</option>
+          <option value="received">⏳ Bekleyen</option>
+          <option value="reviewing">🔍 İnceleniyor</option>
+          <option value="dispatched">🚗 Ekip Görevde</option>
+          <option value="resolved">✅ Çözüldü</option>
+        </select>
+        <select class="admin-select" id="admin-priority-filter">
+          <option value="all">Tüm Öncelikler</option>
+          <option value="urgent">🚨 Acil</option>
+          <option value="high">🔴 Yüksek</option>
+          <option value="medium">🟡 Orta</option>
+          <option value="low">🟢 Düşük</option>
+        </select>
+      </div>
+
+      <!-- Issues Table -->
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="admin-issues-table">
+          <thead>
+            <tr>
+              <th>Fotoğraf</th>
+              <th>Sorun</th>
+              <th>Konum</th>
+              <th>Öncelik</th>
+              <th>Tarih</th>
+              <th>Durum</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="admin-issues-body">
+            <tr><td colspan="7" class="admin-loading">
+              <span class="spinner"></span> Yükleniyor…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── İSTATİSTİKLER BÖLÜMÜ ── -->
+    <section class="admin-section" id="section-stats">
+      <div class="admin-section-header">
+        <div>
+          <h1 class="admin-section-title">İstatistikler</h1>
+          <p class="admin-section-sub">Platform kullanım verileri</p>
+        </div>
+      </div>
+      <div class="stats-grid" id="stats-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── DURUM GÜNCELLEME MODALI ───────────────────────────────── -->
+<div class="modal-overlay hidden" id="status-modal-overlay">
+  <div class="modal" style="max-width:500px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5)">
+      <h2 class="modal-title" style="margin-bottom:0">Durum Güncelle</h2>
+      <button class="detail-close" id="close-status-modal">✕</button>
+    </div>
+
+    <div class="status-issue-preview" id="status-issue-preview"></div>
+
+    <div class="form-group" style="margin-bottom:var(--space-5)">
+      <label class="form-label">Yeni Durum</label>
+      <div class="status-options" id="status-options">
+        <button class="status-opt" data-status="received">📥 Alındı</button>
+        <button class="status-opt" data-status="reviewing">🔍 İnceleniyor</button>
+        <button class="status-opt" data-status="dispatched">🚗 Ekip Görevde</button>
+        <button class="status-opt" data-status="resolved">✅ Çözüldü</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:var(--space-6)">
+      <label class="form-label" for="status-note">
+        Açıklama Notu <span style="color:var(--text-muted);font-weight:400">(vatandaş görecek)</span>
+      </label>
+      <textarea class="form-input form-textarea" id="status-note"
+        placeholder="Örn: Ekibimiz yarın saat 10:00'da mahallede olacak." style="min-height:100px"></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-lg" id="status-save-btn" style="width:100%" disabled>
+      💾 Durumu Kaydet
+    </button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="js/data/issues.js"></script>
+<script src="js/data/ideas.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
