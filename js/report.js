@@ -317,43 +317,57 @@ document.querySelectorAll('.priority-opt').forEach(opt => {
 
 document.getElementById('step4-back')?.addEventListener('click', () => goToStep(3, 'back'));
 
-// ── Submit ────────────────────────────────────────────────────
-document.getElementById('submit-btn')?.addEventListener('click', () => {
+// ── Submit (Firestore'a Kaydet) ───────────────────────────────
+document.getElementById('submit-btn')?.addEventListener('click', async () => {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   document.getElementById('submit-btn-text').innerHTML = '<span class="spinner"></span> Gönderiliyor…';
 
-  // Simulate API call
-  setTimeout(() => {
-    const newId = `CP-2024-00${ISSUES_DATA.length + 1}`;
-    document.getElementById('success-tracking-id').textContent = newId;
+  const catIconMap = {
+    road: '🛣️', lighting: '💡', water: '🚰', park: '🌳',
+    waste: '🗑️', traffic: '🚦', building: '🏗️', other: '📋',
+  };
 
-    // Add to mock data
-    ISSUES_DATA.push({
-      id: newId,
-      category: reportState.category,
-      categoryLabel: reportState.categoryLabel,
-      categoryIcon: '📋',
-      title: reportState.title,
-      description: reportState.description,
-      location: { lat: reportState.lat, lng: reportState.lng, address: reportState.address },
-      neighborhood: currentUser?.neighborhood || 'Bilinmiyor',
-      submittedBy: currentUser?.name || 'Anonim',
-      submittedAt: new Date(),
-      status: 'received',
-      statusHistory: [
-        { status: 'received', label: 'Alındı', date: new Date(), note: 'Başvurunuz sisteme kaydedildi.' }
-      ],
-      priority: reportState.priority,
-      upvotes: 0,
+  try {
+    const docRef = await db.collection('issues').add({
+      category:      reportState.category      || 'other',
+      categoryLabel: reportState.categoryLabel || 'Diğer',
+      categoryIcon:  catIconMap[reportState.category] || '📋',
+      title:         reportState.title,
+      description:   reportState.description || '',
+      location: {
+        lat:     reportState.lat     || null,
+        lng:     reportState.lng     || null,
+        address: reportState.address || 'Konum belirtilmedi',
+      },
+      neighborhood:  currentUser?.neighborhood || 'Bilinmiyor',
+      submittedBy:   currentUser?.name         || 'Anonim',
+      submittedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+      status:        'received',
+      statusHistory: [{
+        status: 'received',
+        label:  'Alındı',
+        note:   'Başvurunuz sisteme kaydedildi.',
+        date:   firebase.firestore.Timestamp.fromDate(new Date()),
+      }],
+      priority:   reportState.priority || 'medium',
+      upvotes:    0,
+      hasPhoto:   !!reportState.photoDataURL,
+      photoColor: '#1a2a3e',
     });
 
-    // Particle burst
-    launchParticles();
+    const trackingId = 'CP-' + docRef.id.slice(0, 8).toUpperCase();
+    document.getElementById('success-tracking-id').textContent = trackingId;
 
+    launchParticles();
     goToStep('success');
-    showToast('success', `Bildiriminiz alındı! Takip no: ${newId}`);
-  }, 1500);
+    showToast('success', `✅ Bildiriminiz alındı! Takip no: ${trackingId}`);
+  } catch (err) {
+    console.error('Kayıt hatası:', err);
+    showToast('error', 'Bildirim gönderilemedi. Lütfen tekrar deneyin.');
+    btn.disabled = false;
+    document.getElementById('submit-btn-text').innerHTML = '🚀 Bildirimi Gönder';
+  }
 });
 
 // ── Particle Burst ────────────────────────────────────────────
