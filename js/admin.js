@@ -5,6 +5,48 @@
 
 const ADMIN_PASSWORD = 'cubuk2024';  // ← Buradan şifreyi değiştirin
 
+// ── Yardımcı: Toast Bildirimi ─────────────────────────────────
+function showToast(type, msg, duration = 4000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const colors = { success: '#22c55e', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-enter';
+  toast.style.cssText = `
+    background:var(--bg-surface);border:1px solid ${colors[type] || colors.info}40;
+    color:var(--text-primary);padding:14px 18px;border-radius:12px;
+    font-size:14px;font-weight:600;max-width:340px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;align-items:center;gap:10px;
+    border-left:3px solid ${colors[type] || colors.info};`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), duration);
+}
+
+// ── Yardımcı: Durum Yapılandırması ───────────────────────────
+function getStatusConfig(status) {
+  const map = {
+    received:   { label: 'Alındı',            color: 'muted', icon: '📥' },
+    reviewing:  { label: 'İnceleniyor',        color: 'blue',  icon: '🔍' },
+    dispatched: { label: 'Ekip Görevlendi',    color: 'amber', icon: '🚗' },
+    resolved:   { label: 'Çözüldü',           color: 'green', icon: '✅' },
+  };
+  return map[status] || map.received;
+}
+
+// ── Yardımcı: Zaman Farkı ─────────────────────────────────────
+function timeAgo(date) {
+  if (!date) return '—';
+  const d = date instanceof Date ? date : new Date(date);
+  const diff = Math.floor((Date.now() - d) / 1000);
+  if (diff < 60)     return 'Az önce';
+  if (diff < 3600)   return `${Math.floor(diff / 60)} dk önce`;
+  if (diff < 86400)  return `${Math.floor(diff / 3600)} saat önce`;
+  return `${Math.floor(diff / 86400)} gün önce`;
+}
+
+
+
 let allIssues     = [];
 let selectedIssue = null;
 let newStatus     = null;
