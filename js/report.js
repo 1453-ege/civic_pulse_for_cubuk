@@ -337,7 +337,41 @@ async function uploadPhotoToCloudinary(file) {
   return data.secure_url;
 }
 
-// ── Submit (Cloudinary + Firestore) ──────────────────────────
+// ── EmailJS E-posta Bildirimi ─────────────────────────────────
+const EMAILJS_PUBLIC_KEY  = 'yI2tb6OU34lD3bgfM';
+const EMAILJS_SERVICE_ID  = 'service_wwmnvtb';
+const EMAILJS_TEMPLATE_ID = 'template_ktpm9cs';
+
+// EmailJS'i başlat
+(function initEmailJS() {
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }
+})();
+
+async function sendEmailNotification(trackingId, photoUrl) {
+  if (typeof emailjs === 'undefined') return;
+  const priorityMap = { low: '🟢 Düşük', medium: '🟡 Orta', high: '🔴 Yüksek', urgent: '🚨 Acil' };
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      issue_title:  reportState.title,
+      neighborhood: currentUser?.neighborhood || 'Bilinmiyor',
+      category:     reportState.categoryLabel || 'Diğer',
+      submitted_by: currentUser?.name         || 'Anonim',
+      priority:     priorityMap[reportState.priority] || '🟡 Orta',
+      description:  reportState.description   || 'Açıklama girilmedi.',
+      address:      reportState.address       || 'Konum belirtilmedi',
+      tracking_id:  trackingId,
+      photo_url:    photoUrl                  || 'Fotoğraf yüklenmedi',
+    });
+    console.log('[EmailJS] Bildirim e-postası gönderildi.');
+  } catch (err) {
+    // E-posta gönderilemese bile sorun bildirimi yine kaydedildi
+    console.warn('[EmailJS] E-posta gönderilemedi:', err);
+  }
+}
+
+// ── Submit (Cloudinary + Firestore + EmailJS) ─────────────────
 document.getElementById('submit-btn')?.addEventListener('click', async () => {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
@@ -387,6 +421,10 @@ document.getElementById('submit-btn')?.addEventListener('click', async () => {
 
     const trackingId = 'CP-' + docRef.id.slice(0, 8).toUpperCase();
     document.getElementById('success-tracking-id').textContent = trackingId;
+
+    // 3. Belediyeye e-posta gönder (arka planda)
+    document.getElementById('submit-btn-text').innerHTML = '<span class="spinner"></span> Bildirim gönderiliyor…';
+    await sendEmailNotification(trackingId, photoUrl);
 
     launchParticles();
     goToStep('success');
