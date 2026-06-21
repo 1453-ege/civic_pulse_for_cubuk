@@ -37,6 +37,8 @@ const UID = getUserId();
 
 // ── Firestore'u Başlangıç Verisiyle Doldur (ilk açılışta) ─────
 async function seedFirestoreIfEmpty() {
+  // Admin sayfasında data dosyaları yüklü değil, atla
+  if (typeof ISSUES_DATA === 'undefined' || typeof IDEAS_DATA === 'undefined') return;
   try {
     const snap = await db.collection('issues').limit(1).get();
     if (!snap.empty) {
