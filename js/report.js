@@ -317,11 +317,30 @@ document.querySelectorAll('.priority-opt').forEach(opt => {
 
 document.getElementById('step4-back')?.addEventListener('click', () => goToStep(3, 'back'));
 
-// ── Submit (Firestore'a Kaydet) ───────────────────────────────
+// ── Cloudinary Fotoğraf Yükleme ───────────────────────────────
+const CLOUDINARY_CLOUD = 'dlswn4soo';
+const CLOUDINARY_PRESET = 'civicpulse';
+
+async function uploadPhotoToCloudinary(file) {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  formData.append('folder', 'cubuk-issues');
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) throw new Error('Fotoğraf yüklenemedi');
+  const data = await res.json();
+  return data.secure_url;
+}
+
+// ── Submit (Cloudinary + Firestore) ──────────────────────────
 document.getElementById('submit-btn')?.addEventListener('click', async () => {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  document.getElementById('submit-btn-text').innerHTML = '<span class="spinner"></span> Gönderiliyor…';
 
   const catIconMap = {
     road: '🛣️', lighting: '💡', water: '🚰', park: '🌳',
@@ -329,6 +348,15 @@ document.getElementById('submit-btn')?.addEventListener('click', async () => {
   };
 
   try {
+    // 1. Fotoğrafı Cloudinary'e yükle
+    let photoUrl = null;
+    if (reportState.photoFile) {
+      document.getElementById('submit-btn-text').innerHTML = '<span class="spinner"></span> Fotoğraf yükleniyor…';
+      photoUrl = await uploadPhotoToCloudinary(reportState.photoFile);
+    }
+
+    // 2. Firestore'a kaydet
+    document.getElementById('submit-btn-text').innerHTML = '<span class="spinner"></span> Kaydediliyor…';
     const docRef = await db.collection('issues').add({
       category:      reportState.category      || 'other',
       categoryLabel: reportState.categoryLabel || 'Diğer',
@@ -352,7 +380,8 @@ document.getElementById('submit-btn')?.addEventListener('click', async () => {
       }],
       priority:   reportState.priority || 'medium',
       upvotes:    0,
-      hasPhoto:   !!reportState.photoDataURL,
+      photoUrl:   photoUrl,
+      hasPhoto:   !!photoUrl,
       photoColor: '#1a2a3e',
     });
 

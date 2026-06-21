@@ -66,8 +66,11 @@ function renderIssues() {
     return `
       <div class="issue-card" data-id="${issue.id}" style="animation-delay:${i * 0.06}s">
         <div class="issue-card-thumb">
-          <div class="issue-card-thumb-bg" style="background:${issue.photoColor || '#1a2a3e'}"></div>
-          <div class="issue-card-thumb-icon">${issue.categoryIcon || '📋'}</div>
+          ${issue.photoUrl
+            ? `<img src="${issue.photoUrl}" alt="Sorun fotoğrafı" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`
+            : `<div class="issue-card-thumb-bg" style="background:${issue.photoColor || '#1a2a3e'}"></div>`
+          }
+          <div class="issue-card-thumb-icon" style="${issue.photoUrl ? 'display:none' : ''}">${issue.categoryIcon || '📋'}</div>
         </div>
         <div class="issue-card-body">
           <div class="issue-card-header">
@@ -153,8 +156,11 @@ function openDetailPanel(issue) {
     </div>` : '';
 
   body.innerHTML = `
-    <div class="detail-photo" style="background:${issue.photoColor || 'var(--bg-raised)'}">
-      <span style="font-size:64px">${issue.categoryIcon || '📋'}</span>
+    <div class="detail-photo" style="background:${issue.photoColor || 'var(--bg-raised)'}; padding:0; overflow:hidden;">
+      ${issue.photoUrl
+        ? `<img src="${issue.photoUrl}" alt="Sorun fotoğrafı" style="width:100%;height:100%;object-fit:cover"/>`
+        : `<span style="font-size:64px">${issue.categoryIcon || '📋'}</span>`
+      }
     </div>
     <div>
       <div class="detail-section-label">Sorun Detayı</div>
